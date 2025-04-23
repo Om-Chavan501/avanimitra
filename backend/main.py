@@ -7,6 +7,7 @@ import time
 import datetime
 import os
 from dotenv import load_dotenv
+import pytz
 
 load_dotenv()
 
@@ -38,16 +39,21 @@ def read_root():
 
 # Function to hit the GET API every 5 minutes
 def hit_api():
+    ist = pytz.timezone('Asia/Kolkata')
     while True:
-        try:
-            BACKEND_API = os.getenv("BACKEND_API")
-            response = requests.get(BACKEND_API)
-            print(f"Current Time: {datetime.datetime.now().strftime('%H:%M:%S')}")
-            print(response.json())
-        except requests.exceptions.RequestException as e:
-            print(f"Current Time: {datetime.datetime.now().strftime('%H%M%S')}")
-            print(f"Error: {e}")
-        time.sleep(840)
+        now = datetime.datetime.now(ist)
+        if now.hour >= 7 or now.hour == 0:  # From 7:00 to 23:59 or 00:00
+            try:
+                BACKEND_API = os.getenv("BACKEND_API")
+                response = requests.get(BACKEND_API)
+                print(f"Current Time (IST): {now.strftime('%H:%M:%S')}")
+                print(response.json())
+            except requests.exceptions.RequestException as e:
+                print(f"Current Time (IST): {now.strftime('%H:%M:%S')}")
+                print(f"Error: {e}")
+        else:
+            print(f"Skipping API hit - Current time outside 7AM-12AM IST: {now.strftime('%H:%M:%S')}")
+        time.sleep(840)  # Sleep for 14 minutes (840 seconds)
 
 
 # Start the API hitter in a separate thread
