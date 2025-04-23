@@ -47,7 +47,7 @@ def hit_api():
         except requests.exceptions.RequestException as e:
             print(f"Current Time: {datetime.datetime.now().strftime('%H%M%S')}")
             print(f"Error: {e}")
-        time.sleep(300)
+        time.sleep(840)
 
 
 # Start the API hitter in a separate thread
